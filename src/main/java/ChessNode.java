@@ -1,17 +1,9 @@
-import java.util.Dictionary;
-import java.util.HashMap;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 
-/**
- * Created by imbananko on 10.03.2018.
- */
 public class ChessNode {
-
-    private String files = "ABCDEFGH";
-    //number
+    private final static String FILES_CHARS = "ABCDEFGH";
     private int rank;
-    //letter
     private int file;
-
     private int depth;
 
     ChessNode previous;
@@ -20,6 +12,10 @@ public class ChessNode {
         this.rank = rank;
         this.file = file;
         this.depth = depth;
+    }
+
+    ChessNode(int rank, int file) {
+        this(rank, file, 0);
     }
 
     @Override
@@ -36,22 +32,20 @@ public class ChessNode {
         return rank * 10 + file;
     }
 
-    public int getRank() {
+    int getRank() {
         return rank;
     }
 
-    public int getFile() {
+    int getFile() {
         return file;
     }
 
-    public int getDepth() {
+    int getDepth() {
         return depth;
     }
 
     @Override
     public String toString() {
-        return String.format(("%c:%d[%d]"), files.charAt(file), rank + 1, depth);
+        return String.format(("%c:%d[%d]"), FILES_CHARS.charAt(file), rank + 1, depth);
     }
-
-
 }
