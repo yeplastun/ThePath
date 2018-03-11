@@ -1,5 +1,3 @@
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
 public class ChessNode {
     private final static String FILES_CHARS = "ABCDEFGH";
     private int rank;
