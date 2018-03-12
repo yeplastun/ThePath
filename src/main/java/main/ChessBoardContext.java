@@ -1,9 +1,13 @@
+package main;
+
+import model.ChessNode;
+import model.ChessPiece;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-class ChessBoardContext {
+public class ChessBoardContext {
 
     private static final Logger log = LogManager.getLogger(ChessBoardContext.class);
 
@@ -11,12 +15,11 @@ class ChessBoardContext {
 
     private ChessPiece piece = null;
 
-    void setPiece(ChessPiece piece) {
+    public void setPiece(ChessPiece piece) {
         this.piece = piece;
     }
 
-    Set<List<ChessNode>> findAllPaths(ChessNode from, ChessNode to) {
-
+    public Set<List<ChessNode>> findAllPaths(ChessNode from, ChessNode to) {
         Set<List<ChessNode>> paths = new HashSet<>();
 
         Queue<ChessNode> queue = new LinkedList<>();
@@ -26,7 +29,6 @@ class ChessBoardContext {
             ChessNode current = queue.remove();
 
             if (current.equals(to) && current.getDepth() == LIMIT_DEPTH) {
-                printThePathTo(current);
                 paths.add(getPath(current));
                 continue;
             }
@@ -38,7 +40,7 @@ class ChessBoardContext {
             List<ChessNode> nodesToVisit = piece.getNodesToVisit(current);
 
             for (ChessNode node : nodesToVisit) {
-                node.previous = current;
+                node.setPrevious(current);
                 queue.add(node);
             }
 
@@ -46,16 +48,36 @@ class ChessBoardContext {
         return paths;
     }
 
-    private void printThePathTo(ChessNode finishNode) {
-        StringBuilder thePathStringBuilder = new StringBuilder();
-        thePathStringBuilder.append(" -> ").append(finishNode.toString());
+    public List<ChessNode> findTheShortestPath(ChessNode from, ChessNode to) {
 
-        ChessNode current = finishNode.previous;
-        while (current != null) {
-            thePathStringBuilder.insert(0, " -> " + current.toString());
-            current = current.previous;
+        HashSet<ChessNode> visited = new HashSet<>();
+
+        Queue<ChessNode> queue = new LinkedList<>();
+        queue.add(from);
+
+        while (!queue.isEmpty()) {
+            ChessNode current = queue.remove();
+
+            if (current.equals(to) && current.getDepth() <= LIMIT_DEPTH) {
+                return getPath(current);
+            }
+
+            if (current.getDepth() > LIMIT_DEPTH) continue;
+
+            log.info("Staying at: " + current);
+
+            List<ChessNode> nodesToVisit = piece.getNodesToVisit(current);
+
+            for (ChessNode node : nodesToVisit) {
+                if (!visited.contains(node)) {
+                    node.setPrevious(current);
+                    visited.add(node);
+                    queue.add(node);
+                }
+            }
+
         }
-        System.out.println(thePathStringBuilder.toString());
+        return null;
     }
 
     private List<ChessNode> getPath(ChessNode to) {
@@ -63,7 +85,7 @@ class ChessBoardContext {
         ChessNode current = to;
         while (current != null) {
             thePath.add(0, current);
-            current = current.previous;
+            current = current.getPrevious();
         }
         return thePath;
     }

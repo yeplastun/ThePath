@@ -1,3 +1,4 @@
+package model;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,10 +17,13 @@ public class Knight implements ChessPiece {
         List<ChessNode> possibleNodes = new LinkedList<>();
 
         for (int i = 0; i < 8; i++) {
-            ChessNode node = new ChessNode(from.getRank() + relativeRankDiffs[i], from.getFile() + relativeFileDiffs[i], from.getDepth() + 1);
-            if (isValid(node)) {
+            ChessNode node;
+            try {
+                node = new ChessNode(from.getRank() + relativeRankDiffs[i], from.getFile() + relativeFileDiffs[i], from.getDepth() + 1);
                 log.debug("{} can be visited from {}", node, from);
                 possibleNodes.add(node);
+            } catch (IllegalArgumentException e) {
+                log.debug(e.getMessage() + " Excluded.");
             }
         }
 
